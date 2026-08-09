@@ -13,6 +13,7 @@
     --text: #e7e9ee;
     --muted: #9aa2b1;
     --accent: #5b9dff;
+    --good: #4fb477;
   }
   * { box-sizing: border-box; }
   body {
@@ -64,15 +65,29 @@
     border-radius: 12px;
     padding: 20px 22px;
   }
-  .card p { margin: 0; color: var(--muted); }
+  .card p { margin: 0 0 12px; color: var(--muted); }
+  .card p:last-child { margin-bottom: 0; }
+  .card ul { margin: 0 0 12px; padding-left: 20px; color: var(--muted); }
+  .card ul li { margin-bottom: 6px; }
+  .card a.repo-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.92rem;
+  }
+  .card a.repo-link:hover { text-decoration: underline; }
   .status {
     display: inline-block;
-    margin-top: 10px;
+    margin-top: 4px;
+    margin-bottom: 14px;
     font-size: 0.78rem;
     color: var(--muted);
     border: 1px solid var(--border);
     padding: 2px 10px;
     border-radius: 999px;
+  }
+  .status.done {
+    color: var(--good);
+    border-color: var(--good);
   }
   footer {
     margin-top: 56px;
@@ -92,43 +107,67 @@
     </header>
 
     <nav>
-      <a href="#code-review">Code Review</a>
-      <a href="#artifacts">Artifacts</a>
-      <a href="#narratives">Narratives</a>
       <a href="#self-assessment">Self-Assessment</a>
+      <a href="#code-review">Code Review</a>
+      <a href="#software-design">Software Design</a>
+      <a href="#algorithms">Algorithms</a>
+      <a href="#databases">Databases</a>
     </nav>
 
     <section id="self-assessment">
       <h2>Professional Self-Assessment</h2>
       <div class="card">
-        <p>Coming in Module Seven — a reflection on my growth through the Computer Science program and how it prepares me for a career as a machine learning systems engineer.</p>
         <span class="status">Not yet published</span>
+        <p>Coming in Module Seven — a reflection on my growth through the Computer Science program and how it prepares me for a career as a machine learning systems engineer.</p>
       </div>
     </section>
 
     <section id="code-review">
       <h2>Code Review</h2>
       <div class="card">
+        <span class="status">Not yet published</span>
         <p>A video walkthrough of my selected artifacts' existing functionality, code analysis, and planned enhancements.</p>
-        <span class="status">Not yet published</span>
       </div>
     </section>
 
-    <section id="artifacts">
-      <h2>Artifacts</h2>
+    <section id="software-design">
+      <h2>Software Design &amp; Engineering — OpenGL Collision Animation</h2>
       <div class="card">
-        <p><strong>Software Design &amp; Engineering</strong> — OpenGL Collision Animation<br>
-        <strong>Algorithms &amp; Data Structures</strong> — Treasure Maze Q-Learning Agent<br>
-        <strong>Databases</strong> — Grazioso Salvare Animal Shelter Dashboard</p>
-        <span class="status">Enhancements in progress</span>
+        <span class="status done">Enhanced — published</span>
+        <p>A C++/OpenGL program that animates circles bouncing around a playfield, colliding with a grid of destructible bricks and with each other. Originally built for CS-330 Computational Graphics and Visualization.</p>
+        <p>The original was a single ~300-line file with global state, an all-pairs collision check that got slower as more circles were added, and a build that only worked inside Visual Studio.</p>
+        <ul>
+          <li>Split the file into <code>Brick</code>, <code>Circle</code>, <code>Physics</code>, <code>Renderer</code>, and a new <code>SpatialGrid</code> class, and removed the global state.</li>
+          <li>Replaced the all-pairs collision check with spatial partitioning — circles only get compared against others sharing or bordering the same grid cell.</li>
+          <li>Added a CMake build (with FetchContent) so it compiles outside Visual Studio; verified with a clean build from a fresh checkout.</li>
+        </ul>
+        <p>Demonstrates Course Outcome 3 (managing design trade-offs, via the spatial grid) and Outcome 4 (well-founded tools, via the modular structure and CMake build).</p>
+        <p><a class="repo-link" href="https://github.com/YusufRM/CS330-Computational-Graphics/tree/main/enhanced">View enhanced code and full write-up on GitHub →</a></p>
       </div>
     </section>
 
-    <section id="narratives">
-      <h2>Narratives</h2>
+    <section id="algorithms">
+      <h2>Algorithms &amp; Data Structures — Treasure Maze Q-Learning Agent</h2>
       <div class="card">
-        <p>Written reflections describing, justifying, and reflecting on each enhancement.</p>
-        <span class="status">Not yet published</span>
+        <span class="status done">Enhanced — published</span>
+        <p>A deep Q-learning agent that learns to navigate an 8x8 maze to a fixed target cell, built in Python with TensorFlow/Keras. Originally built for CS-370 Current/Emerging Trends in Computer Science.</p>
+        <p>The original experience replay buffer stored transitions in a plain Python list and evicted the oldest one with <code>del self.memory[0]</code> — an O(n) operation on every eviction — and sampled training batches completely at random.</p>
+        <ul>
+          <li>Replaced the list with a <code>deque(maxlen=max_memory)</code>, so evicting the oldest transition is O(1) instead of O(n).</li>
+          <li>Added prioritized experience replay, so training time goes toward the transitions the network is currently getting wrong instead of being spread evenly at random.</li>
+          <li>Added a breadth-first search baseline that computes the shortest possible path from every valid starting cell, so the learned path length can be measured against an objective baseline.</li>
+        </ul>
+        <p>Demonstrates Course Outcome 3 (the BFS baseline as an objective way to evaluate the learned policy) and Outcome 4 (prioritized replay, a well-founded reinforcement-learning technique applied correctly).</p>
+        <p><a class="repo-link" href="https://github.com/YusufRM/cs370-pirate-agent/tree/main/enhanced">View enhanced code and full write-up on GitHub →</a></p>
+      </div>
+    </section>
+
+    <section id="databases">
+      <h2>Databases — Grazioso Salvare Animal Shelter Dashboard</h2>
+      <div class="card">
+        <span class="status">Enhancement complete — pending instructor feedback before publishing</span>
+        <p>A PyMongo CRUD wrapper and Dash/Plotly dashboard that lets Grazioso Salvare staff filter animal-shelter intake records by rescue type. Originally built for CS-340 Client/Server Development.</p>
+        <p>The enhancement moves database credentials out of source and into environment variables, adds sanitization against NoSQL operator injection on every query and write, adds indexes on the fields the dashboard actually filters by, and moves the breed-count chart into a MongoDB aggregation pipeline instead of counting in pandas — demonstrating Course Outcome 5, the security mindset.</p>
       </div>
     </section>
 

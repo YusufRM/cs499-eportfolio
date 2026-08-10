@@ -165,9 +165,17 @@
     <section id="databases">
       <h2>Databases — Grazioso Salvare Animal Shelter Dashboard</h2>
       <div class="card">
-        <span class="status">Enhancement complete — pending instructor feedback before publishing</span>
+        <span class="status done">Enhanced — published</span>
         <p>A PyMongo CRUD wrapper and Dash/Plotly dashboard that lets Grazioso Salvare staff filter animal-shelter intake records by rescue type. Originally built for CS-340 Client/Server Development.</p>
-        <p>The enhancement moves database credentials out of source and into environment variables, adds sanitization against NoSQL operator injection on every query and write, adds indexes on the fields the dashboard actually filters by, and moves the breed-count chart into a MongoDB aggregation pipeline instead of counting in pandas — demonstrating Course Outcome 5, the security mindset.</p>
+        <p>The original had the database password hardcoded in plaintext right next to the connection call, and every query was passed straight to MongoDB with nothing checking what was in it.</p>
+        <ul>
+          <li>Credentials now come exclusively from environment variables — never from a literal in source.</li>
+          <li>Every query and write is checked against an allowlist of the operators the dashboard actually uses, so a NoSQL injection attempt (e.g. <code>$where</code>) is rejected before it reaches the database.</li>
+          <li>Added indexes on <code>animal_type</code>/<code>breed</code>/<code>age_upon_outcome_in_weeks</code>/<code>sex_upon_outcome</code>, matching the dashboard's actual filters.</li>
+          <li>Moved the breed-count chart from counting in pandas to a MongoDB aggregation pipeline.</li>
+        </ul>
+        <p>Demonstrates Course Outcome 5 (a security mindset — finding and closing a real credential-exposure and injection vulnerability) and Outcome 4 (indexing and aggregation as the well-founded tool for the job).</p>
+        <p><a class="repo-link" href="https://github.com/YusufRM/CS340-Project-Two/tree/main/enhanced">View enhanced code and full write-up on GitHub →</a></p>
       </div>
     </section>
 
